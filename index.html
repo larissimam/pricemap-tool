@@ -112,7 +112,6 @@
     </div>
 
     <!-- Container do Dashboard (inicialmente escondido) -->
-    <!-- Adicionado 'flex-col' aqui para empilhar Header e Main verticalmente -->
     <div id="dashboard-content" class="h-screen w-full hidden flex flex-col">
         
         <!-- Menu de Filtros Mobile (Off-Canvas - permanece fixed) -->
@@ -172,7 +171,6 @@
         </div>
         
         <!-- Cabeçalho do Dashboard - AGORA FIXO no topo do flex container -->
-        <!-- Removido 'sticky top-0' e adicionado 'flex-shrink-0' -->
         <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 md:px-10 py-3 bg-background-dark/80 backdrop-blur-sm z-10 flex-shrink-0">
             <div class="flex items-center gap-4 text-white">
                 <!-- Ícone e Título -->
@@ -245,9 +243,14 @@
         </main>
     </div>
 
+    <!-- Tooltip Global para todos os gráficos (Posição fixa para aparecer sobre tudo) -->
+    <div id="chart-tooltip" class="fixed hidden pointer-events-none p-2 rounded-lg text-xs font-semibold bg-white text-black shadow-2xl z-50 transition-opacity duration-100 opacity-0 min-w-max">
+        <p id="tooltip-price" class="text-sm font-bold"></p>
+        <p id="tooltip-date" class="text-gray-600 font-normal mt-0.5"></p>
+    </div>
+
     <script>
         // --- CONFIGURAÇÃO DE SEGURANÇA ---
-        // A senha de exemplo usada para gerar o hash abaixo foi: MySecurePassword123
         const MASTER_PASSWORD_HASH = "a4b0ea529e36bb9f6f83a4cef83d07b11f240d57b06c3a7dead5aaed833be44c"; 
 
         // Função para calcular o hash SHA-256 de uma string
@@ -476,18 +479,23 @@
             return lowestRetailer;
         };
 
-        const generateChartPath = (history, height, width) => {
+        /**
+         * Calcula dados do gráfico (caminhos e coordenadas dos pontos).
+         * @param {number[]} history - Array de preços.
+         * @param {number} height - Altura do SVG.
+         * @param {number} width - Largura do SVG (ou valor de referência).
+         * @returns {{linePath: string, fillPath: string, points: Array<{x: number, y: number, price: number, index: number}>}}
+         */
+        const getChartData = (history, height, width) => {
             const validPrices = history.filter(p => p > 0);
             
             if (validPrices.length < 2) {
                 const midY = height / 2;
                 let startY = midY;
-                
                 if (validPrices.length === 1) {
                     startY = height * 0.5;
                 }
-
-                return { linePath: `M0 ${startY} L${width} ${startY}`, fillPath: `M0 ${startY} L${width} ${startY} L${width} ${height} L0 ${height} Z` };
+                return { linePath: `M0 ${startY} L${width} ${startY}`, fillPath: `M0 ${startY} L${width} ${startY} L${width} ${height} L0 ${height} Z`, points: [] };
             }
 
             const minPrice = Math.min(...validPrices); 
@@ -495,15 +503,17 @@
             const range = maxPrice - minPrice;
             const numPoints = history.length;
             
-            const validPoints = [];
+            const points = [];
 
             history.forEach((price, i) => {
-                if (price === 0) return;
-                
+                // Mapeia o índice para a coordenada X (0 a 472)
                 const x = (i / (numPoints - 1)) * width;
 
                 let normalizedY;
-                if (range === 0) {
+                if (price === 0) {
+                     // Pontos com preço 0 são invisíveis
+                     normalizedY = height; 
+                } else if (range === 0) {
                     normalizedY = height * 0.5;
                 } else {
                     const priceScale = (price - minPrice) / range;
@@ -515,18 +525,20 @@
                     normalizedY = height * 0.5;
                 }
 
-                validPoints.push({ x: x, y: normalizedY });
+                points.push({ x: x, y: normalizedY, price: price, index: i });
             });
 
+            const validPoints = points.filter(p => p.price > 0);
             const linePath = validPoints.map((p, i) => i === 0 ? `M${p.x} ${p.y}` : `L${p.x} ${p.y}`).join(' ');
 
-            const startX = validPoints[0].x;
-            const lastX = validPoints[validPoints.length - 1].x;
+            const startX = validPoints[0] ? validPoints[0].x : 0;
+            const lastX = validPoints[validPoints.length - 1] ? validPoints[validPoints.length - 1].x : width;
             
             const fillPath = `${linePath} L${lastX} ${height} L${startX} ${height} Z`;
 
-            return { linePath, fillPath };
+            return { linePath, fillPath, points };
         };
+
 
         const calculateChange = (history) => {
             const initialPrice = history.find(price => price > 0) || 0;
@@ -561,7 +573,6 @@
 
             const priceChange = calculateChange(slicedHistory);
             
-            // Aumento de preço é 'ruim' (vermelho), diminuição é 'bom' (verde)
             const isPriceIncrease = priceChange >= 0; 
             const changeColorClass = isPriceIncrease ? 'text-red-500' : 'text-primary'; 
 
@@ -579,7 +590,8 @@
                  unitLabel = periodDetail ? periodDetail.description : 'Price Change';
             }
             
-            const { linePath, fillPath } = generateChartPath(slicedHistory, 120, 472);
+            // 1. Obter dados do gráfico, incluindo os pontos
+            const { linePath, fillPath, points } = getChartData(slicedHistory, 120, 472);
             
             const modelName = data.category === 'Laptops' ? `Laptop ${data.model}` : data.model;
 
@@ -607,6 +619,29 @@
                 }
             }
 
+            // 2. Gerar o HTML para os pontos interativos
+            const interactivePointsHtml = points.filter(p => p.price > 0).map((p) => {
+                const price = p.price.toFixed(2);
+                // Exibe o rótulo do período
+                const tooltipDate = availablePeriods[p.index] ? availablePeriods[p.index].label : `Week ${p.index + 1}`; 
+
+                return `
+                    <g class="tooltip-trigger cursor-pointer" 
+                        data-price="$${price}" 
+                        data-date="${tooltipDate}" 
+                        data-x="${p.x}" 
+                        data-y="${p.y}">
+                        
+                        <!-- Alvo de Hit (círculo transparente maior) -->
+                        <circle cx="${p.x}" cy="${p.y}" r="8" fill="transparent" />
+                        
+                        <!-- Destaque do Ponto (círculo colorido menor) -->
+                        <circle cx="${p.x}" cy="${p.y}" r="4" fill="${chartColor}" opacity="0" class="point-highlight transition-opacity duration-150" />
+                    </g>
+                `;
+            }).join('');
+
+
             return `
                 <div class="flex min-w-full flex-1 flex-col gap-4 p-4 md:p-6 rounded-xl ${cardClass}">
                     <p class="text-white text-base font-medium leading-normal">${modelName}</p>
@@ -617,10 +652,17 @@
                         </div>
                         ${lowestRetailerContent}
                     </div>
-                    <div class="chart-wrapper">
+                    <!-- 3. Adicionado o wrapper chart-wrapper como 'relative' para o posicionamento do tooltip -->
+                    <div class="chart-wrapper relative">
                         <svg fill="none" height="120" preserveAspectRatio="none" viewBox="0 0 472 120" width="100%" xmlns="http://www.w3.org/2000/svg">
                             <path d="${linePath}" stroke="${chartColor}" stroke-linecap="round" stroke-width="3"></path>
                             <path d="${fillPath}" fill="url(#chart-gradient-dynamic-${productBrand})"></path>
+                            
+                            <!-- Grupo para os pontos interativos -->
+                            <g class="interactive-points-layer">
+                                ${interactivePointsHtml}
+                            </g>
+
                             <defs>
                                 <linearGradient gradientUnits="userSpaceOnUse" id="chart-gradient-dynamic-${productBrand}" x1="236" x2="236" y1="0" y2="120">
                                     <stop stop-color="${chartColor}" stop-opacity="0.3"></stop>
@@ -640,7 +682,6 @@
             const container = document.getElementById('kpi-container');
             if (!container) return;
 
-            // Target the main element directly
             const mainContent = document.querySelector('main');
             if (mainContent) {
                 // Ajusta o fundo com base na marca selecionada
@@ -663,6 +704,10 @@
             }
             
             container.innerHTML = htmlContent;
+            
+            // 4. Adicionar interatividade aos pontos do gráfico (Tooltip)
+            // Usar setTimeout(0) para garantir que os elementos foram renderizados
+            setTimeout(setupChartInteractivity, 0); 
         };
 
         /**
@@ -947,6 +992,67 @@
                 }
             });
         };
+        
+        // --- LÓGICA DO TOOLTIP DE GRÁFICO ---
+        const chartTooltip = document.getElementById('chart-tooltip');
+        const tooltipPrice = document.getElementById('tooltip-price');
+        const tooltipDate = document.getElementById('tooltip-date');
+        
+        const showTooltip = (e) => {
+            const target = e.currentTarget;
+            const price = target.getAttribute('data-price');
+            const date = target.getAttribute('data-date');
+            const chartX = parseFloat(target.getAttribute('data-x'));
+            const chartY = parseFloat(target.getAttribute('data-y'));
+            
+            const svg = target.closest('svg');
+            if (!svg) return;
+            const svgRect = svg.getBoundingClientRect();
+
+            tooltipPrice.textContent = price;
+            tooltipDate.textContent = date;
+            
+            // Adiciona um pequeno offset para que o cursor não cubra o tooltip
+            const offsetX = 15;
+            const offsetY = 15; 
+            
+            // Calcula a posição global na tela
+            const globalX = svgRect.left + chartX + offsetX;
+            const globalY = svgRect.top + chartY + offsetY; 
+
+            chartTooltip.style.left = `${globalX}px`;
+            chartTooltip.style.top = `${globalY}px`;
+            
+            chartTooltip.classList.remove('hidden');
+            // Força o reflow antes de mudar a opacidade para iniciar a transição
+            void chartTooltip.offsetWidth; 
+            chartTooltip.style.opacity = '1';
+            
+            // Adiciona destaque ao ponto
+            target.querySelector('.point-highlight')?.classList.add('opacity-100');
+        };
+
+        const hideTooltip = (e) => {
+            const target = e.currentTarget;
+            chartTooltip.style.opacity = '0';
+            setTimeout(() => {
+                chartTooltip.classList.add('hidden');
+            }, 100); // Espera a transição de opacidade
+
+            // Remove destaque
+            target.querySelector('.point-highlight')?.classList.remove('opacity-100');
+        };
+
+        const setupChartInteractivity = () => {
+            // Remove listeners antigos para evitar duplicações em re-renderizações
+            document.querySelectorAll('.tooltip-trigger').forEach(point => {
+                point.removeEventListener('mouseenter', showTooltip);
+                point.removeEventListener('mouseleave', hideTooltip);
+                
+                point.addEventListener('mouseenter', showTooltip);
+                point.addEventListener('mouseleave', hideTooltip);
+            });
+        };
 
         // --- LÓGICA DO MENU MOBILE ---
         const mobileFilters = document.getElementById('mobile-filters');
@@ -1024,7 +1130,7 @@
                         openMobileFiltersButton.addEventListener('click', showMobileFilters);
                         closeMobileFiltersButton.addEventListener('click', hideMobileFilters);
 
-                        // 3. Renderizar o Dashboard
+                        // 3. Renderizar o Dashboard e configurar a interatividade
                         filterAndRenderKpis('GPUs', 'All Retailers', 'Last 5 Weeks', 'All Brands'); 
                         
                         // 4. Adicionar a classe para iniciar a transição de opacidade
