@@ -170,8 +170,9 @@
             </div>
         </div>
         
-        <!-- Cabeçalho do Dashboard - AGORA FIXO no topo do flex container -->
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 md:px-10 py-3 bg-background-dark/80 backdrop-blur-sm z-10 flex-shrink-0">
+        <!-- Cabeçalho do Dashboard - AGORA FIXO no topo da página em todas as resoluções (via sticky) -->
+        <!-- O uso de sticky top-0 em um flex container pai com rolagem resolve a fixação de forma limpa. -->
+        <header id="dashboard-header" class="sticky top-0 w-full flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 md:px-10 py-3 bg-background-dark/80 backdrop-blur-sm z-20 flex-shrink-0">
             <div class="flex items-center gap-4 text-white">
                 <!-- Ícone e Título -->
                 <div class="size-4 text-primary">
@@ -225,7 +226,7 @@
             </div>
         </header>
         
-        <!-- Conteúdo Principal - Agora é a ÚNICA área de rolagem vertical -->
+        <!-- Conteúdo Principal - Removido o padding de compensação, pois o sticky cuida disso. -->
         <main class="flex-1 flex flex-col overflow-y-auto w-full">
             
             <!-- Conteúdo do Dashboard - KPI Cards -->
@@ -251,6 +252,7 @@
 
     <script>
         // --- CONFIGURAÇÃO DE SEGURANÇA ---
+        // A senha de exemplo usada para gerar o hash abaixo foi: MySecurePassword123
         const MASTER_PASSWORD_HASH = "a4b0ea529e36bb9f6f83a4cef83d07b11f240d57b06c3a7dead5aaed833be44c"; 
 
         // Função para calcular o hash SHA-256 de uma string
@@ -1079,6 +1081,7 @@
         const passwordInput = document.getElementById('password-input');
         const accessButton = document.getElementById('access-button');
         const errorMessage = document.getElementById('error-message');
+        const dashboardHeader = document.getElementById('dashboard-header'); // Novo ID
 
         /**
          * Verifica a senha e carrega o dashboard.
