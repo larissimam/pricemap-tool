@@ -121,57 +121,51 @@
             </button>
             <h3 class="text-xl font-bold text-primary mb-4 mt-8">Filters</h3>
             
-            <!-- Dropdowns de Filtro para Mobile -->
+            <!-- Dropdowns de Filtro para Mobile - Agora contêm APENAS o botão e a DIV do menu (usando o mesmo ID) -->
+            <!-- O menu em si é posicionado abaixo do botão, rolando com o painel lateral -->
             <div class="flex flex-col gap-4">
-                <!-- Product Category Filter (Dropdown) -->
+                
+                <!-- Product Category Filter (Botão + Menu) -->
                 <div class="relative w-full" data-menu-container="category">
                     <button id="category-dropdown-toggle-mobile" class="flex h-10 w-full shrink-0 items-center justify-between gap-x-2 rounded-lg bg-black/20 px-4 border border-white/10 hover:bg-white/10" data-menu-toggle="category">
                         <p id="category-label-mobile" class="text-white text-sm font-medium leading-normal">GPUs</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
-                    <div id="category-dropdown-menu" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
-                        <!-- Links serão inseridos dinamicamente pelo JS -->
-                    </div>
+                    <!-- CÓPIA DO MENU: Aqui ele se comporta como um elemento normal no fluxo do menu lateral -->
+                    <div id="category-dropdown-menu-mobile" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false"></div>
                 </div>
                 
-                <!-- Brand Filter (Dropdown) -->
+                <!-- Brand Filter (Botão + Menu) -->
                 <div class="relative w-full" data-menu-container="brand">
                     <button id="brand-dropdown-toggle-mobile" class="flex h-10 w-full shrink-0 items-center justify-between gap-x-2 rounded-lg bg-black/20 px-4 border border-white/10 hover:bg-white/10" data-menu-toggle="brand">
                         <p id="brand-label-mobile" class="text-white text-sm font-medium leading-normal">All Brands</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
-                    <div id="brand-dropdown-menu" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
-                        <!-- Links serão inseridos dinamicamente pelo JS -->
-                    </div>
+                    <div id="brand-dropdown-menu-mobile" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false"></div>
                 </div>
                 
-                <!-- Date Range Filters (Dropdown) -->
+                <!-- Date Range Filters (Botão + Menu) -->
                 <div class="relative w-full" data-menu-container="date">
                     <button id="date-dropdown-toggle-mobile" class="flex h-10 w-full shrink-0 items-center justify-between gap-x-2 rounded-lg bg-black/20 px-4 border border-white/10 hover:bg-white/10" data-menu-toggle="date">
                         <p id="date-label-mobile" class="text-white text-sm font-medium leading-normal">Last 5 Weeks</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
-                    <div id="date-dropdown-menu" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
-                        <!-- Links serão inseridos dinamicamente pelo JS -->
-                    </div>
+                    <div id="date-dropdown-menu-mobile" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false"></div>
                 </div>
                 
-                <!-- Retailer Filter Button (Dropdown) -->
+                <!-- Retailer Filter Button (Botão + Menu) -->
                 <div class="relative w-full" data-menu-container="retailer">
                     <button id="retailer-dropdown-toggle-mobile" class="flex h-10 w-full shrink-0 items-center justify-between gap-x-2 rounded-lg bg-black/20 px-4 border border-white/10 hover:bg-white/10" data-menu-toggle="retailer">
                         <p id="retailer-label-mobile" class="text-white text-sm font-medium leading-normal">All Retailers</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
-                    <div id="retailer-dropdown-menu" class="absolute right-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
-                        <!-- Links serão inseridos dinamicamente pelo JS -->
-                    </div>
+                    <div id="retailer-dropdown-menu-mobile" class="absolute right-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false"></div>
                 </div>
                 
             </div>
         </div>
         
         <!-- Cabeçalho do Dashboard - AGORA FIXO no topo da página em todas as resoluções (via sticky) -->
-        <!-- O uso de sticky top-0 em um flex container pai com rolagem resolve a fixação de forma limpa. -->
         <header id="dashboard-header" class="sticky top-0 w-full flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 md:px-10 py-3 bg-background-dark/80 backdrop-blur-sm z-20 flex-shrink-0">
             <div class="flex items-center gap-4 text-white">
                 <!-- Ícone e Título -->
@@ -189,15 +183,19 @@
                 <span class="material-symbols-outlined text-base">filter_list</span>
             </button>
 
-            <!-- Filtros Desktop (Escondidos no Mobile) -->
+            <!-- Filtros Desktop (Visíveis no Desktop) -->
             <div class="hidden md:flex items-center gap-4">
+                
                 <!-- Product Category Filter (Dropdown) -->
                 <div class="relative" data-menu-container="category-desktop">
                     <button id="category-dropdown-toggle" class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-black/20 pl-4 pr-2 border border-white/10 hover:bg-white/10" data-menu-toggle="category">
                         <p id="category-label" class="text-white text-sm font-medium leading-normal">GPUs</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
-                    <!-- O menu em si usa o ID compartilhado 'category-dropdown-menu' -->
+                    <!-- MENU ORIGINAL: Agora está aqui, visível e relativo ao botão no desktop -->
+                    <div id="category-dropdown-menu-desktop" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
+                        <!-- Links serão inseridos dinamicamente pelo JS -->
+                    </div>
                 </div>
                 
                 <!-- Brand Filter (Dropdown) -->
@@ -206,6 +204,9 @@
                         <p id="brand-label" class="text-white text-sm font-medium leading-normal">All Brands</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
+                    <div id="brand-dropdown-menu-desktop" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
+                        <!-- Links serão inseridos dinamicamente pelo JS -->
+                    </div>
                 </div>
                 
                 <!-- Date Range Filters (Dropdown) -->
@@ -214,6 +215,9 @@
                         <p id="date-label" class="text-white text-sm font-medium leading-normal">Last 5 Weeks</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
+                    <div id="date-dropdown-menu-desktop" class="absolute left-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
+                        <!-- Links serão inseridos dinamicamente pelo JS -->
+                    </div>
                 </div>
                 
                 <!-- Retailer Filter Button (Dropdown) -->
@@ -222,11 +226,15 @@
                         <p id="retailer-label" class="text-white text-sm font-medium leading-normal">All Retailers</p>
                         <span class="material-symbols-outlined text-base">expand_more</span>
                     </button>
+                    <div id="retailer-dropdown-menu-desktop" class="absolute right-0 mt-1 w-full rounded-lg bg-gray-900/95 backdrop-blur border border-white/10 shadow-lg hidden z-20 overflow-hidden" data-open="false">
+                        <!-- Links serão inseridos dinamicamente pelo JS -->
+                    </div>
                 </div>
+                
             </div>
         </header>
         
-        <!-- Conteúdo Principal - Removido o padding de compensação, pois o sticky cuida disso. -->
+        <!-- Conteúdo Principal -->
         <main class="flex-1 flex flex-col overflow-y-auto w-full">
             
             <!-- Conteúdo do Dashboard - KPI Cards -->
@@ -784,24 +792,41 @@
             if (dateLabelMobile) { dateLabelMobile.textContent = currentPeriod; }
 
 
-            document.querySelectorAll('#category-dropdown-menu .dropdown-link').forEach(link => { link.classList.remove('active'); });
-            const activeCategoryLink = document.querySelector(`#category-dropdown-menu .dropdown-link[data-category="${currentCategory}"]`);
-            if (activeCategoryLink) { activeCategoryLink.classList.add('active'); }
-
-            document.querySelectorAll('#brand-dropdown-menu .dropdown-link').forEach(link => {
+            // Atualização de estados ativos para TODOS os menus (desktop e mobile)
+            document.querySelectorAll('.dropdown-link').forEach(link => { 
                 link.classList.remove('active', 'bg-red-500/20', 'text-secondary', 'bg-primary/20', 'text-primary', 'text-gray-200');
-                
-                if (link.getAttribute('data-brand') === currentBrand) {
-                    if (currentBrand === 'AMD') {
-                        link.classList.add('bg-red-500/20', 'text-secondary', 'active');
-                    } else {
-                        link.classList.add('bg-primary/20', 'text-primary', 'active');
-                    }
+                link.classList.add('text-gray-200'); // Cor padrão
+            });
+            
+            // Atualizar Categoria
+            document.querySelectorAll(`.dropdown-link[data-category="${currentCategory}"]`).forEach(link => { 
+                link.classList.remove('text-gray-200');
+                link.classList.add('active', 'bg-primary/20', 'text-primary'); 
+            });
+
+            // Atualizar Marca
+            document.querySelectorAll(`.dropdown-link[data-brand="${currentBrand}"]`).forEach(link => {
+                link.classList.remove('text-gray-200');
+                if (currentBrand === 'AMD') {
+                    link.classList.add('bg-red-500/20', 'text-secondary', 'active');
                 } else {
-                     link.classList.add('text-gray-200');
+                    link.classList.add('bg-primary/20', 'text-primary', 'active');
                 }
             });
             
+            // Atualizar Varejista
+            document.querySelectorAll(`.dropdown-link[data-retailer="${currentRetailer}"]`).forEach(link => {
+                link.classList.remove('text-gray-200');
+                link.classList.add('active', 'bg-primary/20', 'text-primary'); 
+            });
+
+            // Atualizar Período
+            document.querySelectorAll(`.dropdown-link[data-period="${currentPeriod}"]`).forEach(link => { 
+                link.classList.remove('text-gray-200');
+                link.classList.add('active', 'bg-primary/20', 'text-primary'); 
+            });
+
+
             const brandButton = document.getElementById('brand-dropdown-toggle');
             const brandButtonMobile = document.getElementById('brand-dropdown-toggle-mobile');
             
@@ -818,37 +843,35 @@
             updateBrandButtonClasses(brandButton);
             updateBrandButtonClasses(brandButtonMobile);
             
-
-            document.querySelectorAll('#retailer-dropdown-menu .dropdown-link').forEach(link => { link.classList.remove('active'); });
-            const activeRetailerLink = document.querySelector(`#retailer-dropdown-menu .dropdown-link[data-retailer="${currentRetailer}"]`);
-            if (activeRetailerLink) { activeRetailerLink.classList.add('active'); }
-
-            document.querySelectorAll('#date-dropdown-menu .dropdown-link').forEach(link => { link.classList.remove('active'); });
-            const activePeriodLink = document.querySelector(`#date-dropdown-menu .dropdown-link[data-period="${currentPeriod}"]`);
-            if (activePeriodLink) { activePeriodLink.classList.add('active'); }
-            
             // Fecha o menu mobile após a filtragem
-            hideMobileFilters();
+            if (mobileFilters && !mobileFilters.classList.contains('open')) {
+                hideAllDropdownMenus();
+            }
         };
 
         /**
          * Configura o dropdown de Categoria.
          */
         const setupCategoryDropdown = () => {
-            const menu = document.getElementById('category-dropdown-menu');
-            if (!menu) return;
+            const menus = document.querySelectorAll('[id^="category-dropdown-menu"]');
+            if (menus.length === 0) return;
 
-            menu.innerHTML = availableCategories.map(category => `
+            const menuContent = availableCategories.map(category => `
                 <a href="#" class="dropdown-link block px-4 py-2 text-sm rounded-lg transition-colors duration-150" 
-                    data-category="${category}">
+                    data-category="${category}" data-menu-name="category">
                     ${category}
                 </a>
             `).join('');
 
-            document.querySelectorAll('#category-dropdown-menu .dropdown-link').forEach(link => {
+            menus.forEach(menu => {
+                menu.innerHTML = menuContent;
+            });
+
+
+            document.querySelectorAll('.dropdown-link[data-menu-name="category"]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Stop propagation for mobile menu links
+                    e.stopPropagation(); 
                     const newCategory = e.currentTarget.getAttribute('data-category');
                     hideAllDropdownMenus(); 
                     filterAndRenderKpis(newCategory, 'All Retailers', currentPeriod, 'All Brands'); 
@@ -860,25 +883,27 @@
          * Configura o dropdown de Marca.
          */
         const setupBrandDropdown = () => {
-            const menu = document.getElementById('brand-dropdown-menu');
-            if (!menu) return;
+            const menus = document.querySelectorAll('[id^="brand-dropdown-menu"]');
+            if (menus.length === 0) return;
 
             const brandOptions = availableBrands.map(brand => {
                 const label = brand === 'All Brands' ? 'All Brands' : brand;
                 return `
                     <a href="#" class="dropdown-link block px-4 py-2 text-sm rounded-lg transition-colors duration-150" 
-                        data-brand="${brand}">
+                        data-brand="${brand}" data-menu-name="brand">
                         ${label}
                     </a>
                 `;
             }).join('');
 
-            menu.innerHTML = brandOptions;
+            menus.forEach(menu => {
+                 menu.innerHTML = brandOptions;
+            });
 
-            document.querySelectorAll('#brand-dropdown-menu .dropdown-link').forEach(link => {
+            document.querySelectorAll('.dropdown-link[data-menu-name="brand"]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Stop propagation for mobile menu links
+                    e.stopPropagation(); 
                     const newBrand = e.currentTarget.getAttribute('data-brand');
                     hideAllDropdownMenus(); 
                     filterAndRenderKpis(currentCategory, 'All Retailers', currentPeriod, newBrand);
@@ -890,20 +915,25 @@
          * Configura o dropdown de Data.
          */
         const setupDateDropdown = () => {
-            const menu = document.getElementById('date-dropdown-menu');
-            if (!menu) return;
+            const menus = document.querySelectorAll('[id^="date-dropdown-menu"]');
+            if (menus.length === 0) return;
 
-            menu.innerHTML = availablePeriods.map(period => `
+            const menuContent = availablePeriods.map(period => `
                 <a href="#" class="dropdown-link block px-4 py-2 text-sm rounded-lg transition-colors duration-150" 
-                    data-period="${period.label}">
+                    data-period="${period.label}" data-menu-name="date">
                     ${period.label}
                 </a>
             `).join('');
 
-            document.querySelectorAll('#date-dropdown-menu .dropdown-link').forEach(link => {
+            menus.forEach(menu => {
+                menu.innerHTML = menuContent;
+            });
+
+
+            document.querySelectorAll('.dropdown-link[data-menu-name="date"]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Stop propagation for mobile menu links
+                    e.stopPropagation(); 
                     const newPeriod = e.currentTarget.getAttribute('data-period');
                     hideAllDropdownMenus();
                     filterAndRenderKpis(currentCategory, currentRetailer, newPeriod, currentBrand);
@@ -915,20 +945,24 @@
          * Configura o dropdown de Varejista.
          */
         const setupRetailerDropdown = () => {
-            const menu = document.getElementById('retailer-dropdown-menu');
-            if (!menu) return;
+            const menus = document.querySelectorAll('[id^="retailer-dropdown-menu"]');
+            if (menus.length === 0) return;
 
-            menu.innerHTML = availableRetailers.map(retailer => `
+            const menuContent = availableRetailers.map(retailer => `
                 <a href="#" class="dropdown-link block px-4 py-2 text-sm rounded-lg transition-colors duration-150" 
-                    data-retailer="${retailer}">
+                    data-retailer="${retailer}" data-menu-name="retailer">
                     ${retailer}
                 </a>
             `).join('');
 
-            document.querySelectorAll('#retailer-dropdown-menu .dropdown-link').forEach(link => {
+            menus.forEach(menu => {
+                menu.innerHTML = menuContent;
+            });
+
+            document.querySelectorAll('.dropdown-link[data-menu-name="retailer"]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Stop propagation for mobile menu links
+                    e.stopPropagation(); 
                     const newRetailer = e.currentTarget.getAttribute('data-retailer');
                     hideAllDropdownMenus();
                     filterAndRenderKpis(currentCategory, newRetailer, currentPeriod, currentBrand);
@@ -936,35 +970,35 @@
             });
         };
         
-        /**
-         * Alterna a visibilidade de um menu dropdown.
-         */
-        const toggleDropdownMenu = (menuName) => {
-            const menu = document.getElementById(`${menuName}-dropdown-menu`);
+        // Novo toggle que encontra o menu certo a partir do botão clicado
+        const toggleMenuElement = (e) => {
+            const menuName = e.currentTarget.getAttribute('data-menu-toggle');
+            // Encontra o menu que está DENTRO do mesmo container do botão
+            const menuElement = e.currentTarget.closest('[data-menu-container]').querySelector(`[id^="${menuName}-dropdown-menu"]`);
 
-            if (menu) {
-                const isOpen = menu.getAttribute('data-open') === 'true';
+            if (menuElement) {
+                const isOpen = menuElement.getAttribute('data-open') === 'true';
                 
-                // Esconde TODOS os menus
+                // Fecha todos os outros (desktop e mobile)
                 hideAllDropdownMenus();
 
                 if (!isOpen) {
-                    // Mostra o menu desejado
-                    menu.classList.remove('hidden');
-                    menu.setAttribute('data-open', 'true');
+                    // Abre o menu correto
+                    menuElement.classList.remove('hidden');
+                    menuElement.setAttribute('data-open', 'true');
                 }
             }
         };
-        
+
         /**
          * Esconde um menu dropdown específico.
          */
         const hideDropdownMenu = (menuName) => {
-            const menu = document.getElementById(`${menuName}-dropdown-menu`);
-            if (menu) {
-                menu.classList.add('hidden');
-                menu.setAttribute('data-open', 'false');
-            }
+            // Usa querySelectorAll para fechar todas as cópias do menu (desktop e mobile)
+            document.querySelectorAll(`[id^="${menuName}-dropdown-menu"]`).forEach(menu => {
+                 menu.classList.add('hidden');
+                 menu.setAttribute('data-open', 'false');
+            });
         };
         
         /**
@@ -978,17 +1012,16 @@
          * Esconde todos os dropdowns se o clique for fora.
          */
         const hideAllDropdownsOnClickOutside = (event) => {
-            // Verifica containers desktop e mobile
             const containers = ['category', 'brand', 'date', 'retailer'];
             containers.forEach(menuName => {
                 const containerDesktop = document.querySelector(`[data-menu-container="${menuName}-desktop"]`);
                 const containerMobile = document.querySelector(`#mobile-filters [data-menu-container="${menuName}"]`);
                 
+                // Se o clique foi fora do container desktop, esconde
                 if (containerDesktop && !containerDesktop.contains(event.target)) {
                     hideDropdownMenu(menuName);
                 }
-                // Nota: O menu mobile está dentro do off-canvas, que só deve ser fechado por botão, 
-                // mas os dropdowns internos devem ser fechados ao clicar fora DELES.
+                // Se o clique foi fora do container mobile, esconde
                 if (containerMobile && !containerMobile.contains(event.target)) {
                     hideDropdownMenu(menuName);
                 }
@@ -1115,18 +1148,15 @@
                         setupRetailerDropdown();
 
                         // 2. Adicionar Event Listeners aos botões do Dashboard
-                        // Botões Desktop
-                        document.querySelector('#category-dropdown-toggle')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('category'); });
-                        document.querySelector('#brand-dropdown-toggle')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('brand'); });
-                        document.querySelector('#date-dropdown-toggle')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('date'); });
-                        document.querySelector('#retailer-dropdown-toggle')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('retailer'); });
+                        // Botões Desktop E Mobile - Usando a nova lógica toggleMenuElement
+                        document.querySelectorAll('[data-menu-toggle]').forEach(button => {
+                             button.addEventListener('click', (e) => { 
+                                 e.preventDefault(); 
+                                 e.stopPropagation(); 
+                                 toggleMenuElement(e);
+                             });
+                        });
                         
-                        // Botões Mobile (dentro do menu off-canvas)
-                        document.querySelector('#category-dropdown-toggle-mobile')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('category'); });
-                        document.querySelector('#brand-dropdown-toggle-mobile')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('brand'); });
-                        document.querySelector('#date-dropdown-toggle-mobile')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('date'); });
-                        document.querySelector('#retailer-dropdown-toggle-mobile')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleDropdownMenu('retailer'); });
-
                         document.addEventListener('click', hideAllDropdownsOnClickOutside);
                         
                         // Listeners do Menu Mobile
